@@ -1,17 +1,21 @@
 use std::fs::{self, OpenOptions};
 use std::io::{Write, stdin, stdout};
-
 fn main() {
-    let _ = OpenOptions::new()
-        .create_new(true)
-        .write(true)
-        .open("todo_list");
+    let mut todo_file = OpenOptions::new()
+        .create(true)
+        .truncate(false)
+        .append(true)
+        .open("todo_list")
+        .ok()
+        .unwrap();
 
     file_reader();
-
+    let _ = stdout().flush();
     let input = user_input();
+    let _ = stdout().flush();
+    let _ = writeln!(todo_file, "{}", input.trim_end());
+    let _ = stdout().flush();
 
-    file_wirter(input);
     file_reader();
 }
 
@@ -19,7 +23,8 @@ fn user_input() -> String {
     let mut _input = String::new();
     println!("Please enter a Todoo");
     let _ = stdout().flush();
-    stdin().read_line(&mut _input).unwrap().to_string()
+    stdin().read_line(&mut _input).unwrap();
+    _input
 }
 
 fn file_reader() {
@@ -28,8 +33,3 @@ fn file_reader() {
         print!("{s}");
     }
 }
-
-fn file_wirter(input: String) {
-    let _ = fs::write("todo_list", input);
-}
-// make file to string and add the todo at the and withe space and put it back in the file
